@@ -28,10 +28,10 @@ function getHostOs(): IHostOs {
     let hostOsType: HostOsType;
     if (osRelease.indexOf("windows") > -1) {
         hostOsType = HostOsType.Windows;
-    } else if (osRelease.indexOf("linux") > -1) {
-        hostOsType = HostOsType.Linux;
     } else if (osRelease.indexOf("mac") > -1) {
         hostOsType = HostOsType.Mac;
+    } else {
+        hostOsType = HostOsType.Linux;
     }
 
     return {
