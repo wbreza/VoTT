@@ -78,7 +78,7 @@ export default function registerToolbar() {
         icon: "fas fa-arrow-circle-up",
         group: "navigation",
         type: ToolbarItemType.Action,
-        accelerators: ["ArrowUp", "w", "W"],
+        accelerators: ["ArrowUp", "KeyW"],
     });
 
     ToolbarItemFactory.register(NextAsset, {
@@ -87,7 +87,7 @@ export default function registerToolbar() {
         icon: "fas fa-arrow-circle-down",
         group: "navigation",
         type: ToolbarItemType.Action,
-        accelerators: ["ArrowDown", "s", "S"],
+        accelerators: ["ArrowDown", "KeyS"],
     });
 
     ToolbarItemFactory.register(SaveProject, {

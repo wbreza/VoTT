@@ -53,7 +53,7 @@ export class KeyboardManager extends React.Component<any, IKeyboardContext> {
         if (evt.altKey) {
             keyParts.push("Alt+");
         }
-        keyParts.push(evt.key);
+        keyParts.push(evt.code);
         return keyParts.join("");
     }
 
