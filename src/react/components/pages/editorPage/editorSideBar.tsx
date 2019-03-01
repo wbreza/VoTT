@@ -13,6 +13,7 @@ export interface IEditorSideBarProps {
     assets: IAsset[];
     onAssetSelected: (asset: IAsset) => void;
     selectedAsset?: IAsset;
+    onAssetError?: () => void;
 }
 
 /**
@@ -78,7 +79,11 @@ export default class EditorSideBar extends React.Component<IEditorSideBarProps, 
 
         if ((!prevProps.selectedAsset && this.props.selectedAsset) ||
             prevProps.selectedAsset.id !== this.props.selectedAsset.id) {
-            this.selectAsset(this.props.selectedAsset);
+                if (!this.props.selectedAsset.hasError) {
+                    this.selectAsset(this.props.selectedAsset);
+                } else {
+                    console.log("could't load");
+                }
         }
     }
 
@@ -107,7 +112,8 @@ export default class EditorSideBar extends React.Component<IEditorSideBarProps, 
                 className={this.getAssetCssClassNames(asset, selectedAsset)}
                 onClick={() => this.onAssetClicked(asset)}>
                 <div className="asset-item-image">
-                    <AssetPreview asset={asset} />
+                    <AssetPreview asset={asset}
+                        onAssetError={this.props.onAssetError} />
                 </div>
                 <div className="asset-item-metadata">
                     <span className="asset-filename" title={asset.name}>{asset.name}</span>

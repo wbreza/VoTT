@@ -25,6 +25,8 @@ export interface IAssetProps {
     onDeactivated?: (contentSource: ContentSource) => void;
     /** Event handler that fires when a child asset is selected (ex. Paused on a video frame) */
     onChildAssetSelected?: (asset: IAsset) => void;
+
+    onAssetError?: () => void;
 }
 
 /**
