@@ -82,7 +82,7 @@ export default class EditorSideBar extends React.Component<IEditorSideBarProps, 
                 if (!this.props.selectedAsset.hasError) {
                     this.selectAsset(this.props.selectedAsset);
                 } else {
-                    console.log("could't load");
+                    this.selectAsset(prevProps.selectedAsset);
                 }
         }
     }

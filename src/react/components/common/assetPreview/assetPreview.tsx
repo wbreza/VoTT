@@ -100,7 +100,8 @@ export class AssetPreview extends React.Component<IAssetPreviewProps, IAssetPrev
                                         additionalSettings={this.props.additionalSettings}
                                         onLoaded={this.onAssetLoad}
                                         onActivated={this.props.onActivated}
-                                        onDeactivated={this.props.onDeactivated} />;
+                                        onDeactivated={this.props.onDeactivated}
+                                        onAssetError={this.props.onAssetError}/>;
                                 case AssetType.Video:
                                 case AssetType.VideoFrame:
                                     return <VideoAsset asset={rootAsset}
