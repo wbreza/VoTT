@@ -369,10 +369,11 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
         }
     }
 
-    private onAssetError = () => {
-        const falseAsset = {...this.state.selectedAsset};
-        falseAsset.asset.hasError = true;
-        this.onAssetMetadataChanged(falseAsset);
+    private onAssetError = async (e) => {
+        const assetMetadata = await this.props.actions.loadAssetMetadata(this.props.project,
+                                                                        this.state.selectedAsset.asset);
+        assetMetadata.asset.hasError = true;
+        this.onAssetMetadataChanged(assetMetadata);
     }
 
     private selectAsset = async (asset: IAsset): Promise<void> => {

@@ -26,7 +26,7 @@ export interface IAssetProps {
     /** Event handler that fires when a child asset is selected (ex. Paused on a video frame) */
     onChildAssetSelected?: (asset: IAsset) => void;
 
-    onAssetError?: () => void;
+    onAssetError?: (event: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
 /**
@@ -92,33 +92,35 @@ export class AssetPreview extends React.Component<IAssetPreviewProps, IAssetPrev
                             <i className="fas fa-circle-notch fa-spin" />
                         </div>
                     }
-                    {asset.type === AssetType.Image &&
-                        <ImageAsset asset={rootAsset}
-                            additionalSettings={this.props.additionalSettings}
-                            onLoaded={this.onAssetLoad}
-                            onActivated={this.props.onActivated}
-                            onDeactivated={this.props.onDeactivated} />
-                    }
-                    {(asset.type === AssetType.Video || asset.type === AssetType.VideoFrame) &&
-                        <VideoAsset asset={rootAsset}
-                            additionalSettings={this.props.additionalSettings}
-                            childAssets={childAssets}
-                            timestamp={asset.timestamp}
-                            autoPlay={autoPlay}
-                            onLoaded={this.onAssetLoad}
-                            onChildAssetSelected={this.props.onChildAssetSelected}
-                            onActivated={this.props.onActivated}
-                            onDeactivated={this.props.onDeactivated} />
-                    }
-                    {asset.type === AssetType.TFRecord &&
-                        <TFRecordAsset asset={asset}
-                            onLoaded={this.onAssetLoad}
-                            onActivated={this.props.onActivated}
-                            onDeactivated={this.props.onDeactivated} />
-                    }
-                    {asset.type === AssetType.Unknown &&
-                        <div className="asset-error">{strings.editorPage.assetError}</div>
-                    }
+                    { !asset.hasError ?
+                        (() => {
+                            switch (asset.type) {
+                                case AssetType.Image:
+                                    return <ImageAsset asset={rootAsset}
+                                        additionalSettings={this.props.additionalSettings}
+                                        onLoaded={this.onAssetLoad}
+                                        onActivated={this.props.onActivated}
+                                        onDeactivated={this.props.onDeactivated} />;
+                                case AssetType.Video:
+                                case AssetType.VideoFrame:
+                                    return <VideoAsset asset={rootAsset}
+                                        additionalSettings={this.props.additionalSettings}
+                                        childAssets={childAssets}
+                                        timestamp={asset.timestamp}
+                                        autoPlay={autoPlay}
+                                        onLoaded={this.onAssetLoad}
+                                        onChildAssetSelected={this.props.onChildAssetSelected}
+                                        onActivated={this.props.onActivated}
+                                        onDeactivated={this.props.onDeactivated} />;
+                                case AssetType.TFRecord:
+                                    return <TFRecordAsset asset={asset}
+                                        onLoaded={this.onAssetLoad}
+                                        onActivated={this.props.onActivated}
+                                        onDeactivated={this.props.onDeactivated} />;
+                                default:
+                                    return <div className="asset-error">{strings.editorPage.assetError}</div>;
+                            }
+                    })() : <div className="asset-error">{strings.editorPage.assetError}</div>}
                 </div>
             </div>
         );

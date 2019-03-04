@@ -13,7 +13,7 @@ export interface IEditorSideBarProps {
     assets: IAsset[];
     onAssetSelected: (asset: IAsset) => void;
     selectedAsset?: IAsset;
-    onAssetError?: () => void;
+    onAssetError?: (e) => void;
 }
 
 /**
