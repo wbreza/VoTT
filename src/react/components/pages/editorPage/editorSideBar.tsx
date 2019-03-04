@@ -79,11 +79,14 @@ export default class EditorSideBar extends React.Component<IEditorSideBarProps, 
 
         if ((!prevProps.selectedAsset && this.props.selectedAsset) ||
             prevProps.selectedAsset.id !== this.props.selectedAsset.id) {
-                if (!this.props.selectedAsset.hasError) {
-                    this.selectAsset(this.props.selectedAsset);
-                } else {
-                    this.selectAsset(prevProps.selectedAsset);
-                }
+                // if (!this.props.selectedAsset.hasError) {
+                //     this.selectAsset(this.props.selectedAsset);
+                // } else {
+                //     if (prevProps.selectedAsset) {
+                //         this.selectAsset(prevProps.selectedAsset);
+                //     }
+                // }
+                this.selectAsset(this.props.selectedAsset);
         }
     }
 
