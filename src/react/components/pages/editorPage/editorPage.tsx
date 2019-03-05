@@ -24,6 +24,7 @@ import { AssetPreview, IAssetPreviewSettings } from "../../common/assetPreview/a
 import CanvasHelpers from "./canvasHelpers";
 import { tagColors } from "../../../../common/tagColors";
 import { ToolbarItemName } from "../../../../registerToolbar";
+import { strings } from "../../../../common/strings";
 
 /**
  * Properties for Editor Page
@@ -155,7 +156,7 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
                             onToolbarItemSelected={this.onToolbarItemSelected} />
                     </div>
                     <div className="editor-page-content-body">
-                        {selectedAsset &&
+                        {selectedAsset && !selectedAsset.asset.hasError &&
                             <Canvas
                                 ref={this.canvas}
                                 selectedAsset={this.state.selectedAsset}
@@ -171,6 +172,9 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
                                     asset={this.state.selectedAsset.asset}
                                     childAssets={this.state.childAssets} />
                             </Canvas>
+                        }
+                        {selectedAsset && selectedAsset.asset.hasError &&
+                            <div className="asset-error">{strings.editorPage.assetError}</div>
                         }
                     </div>
                     <div>

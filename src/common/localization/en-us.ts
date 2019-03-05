@@ -183,7 +183,7 @@ export const english: IAppStrings = {
                 tooltip: "Next Frame",
             },
         },
-        assetError: "Unable to display asset",
+        assetError: "Unable to load asset",
         canvas: {
             removeAllRegions: {
                 title: "Remove All Regions",

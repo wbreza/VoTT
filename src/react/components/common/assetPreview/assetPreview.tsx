@@ -87,7 +87,7 @@ export class AssetPreview extends React.Component<IAssetPreviewProps, IAssetPrev
         return (
             <div className={classNames.join(" ")}>
                 <div className="asset-preview-container">
-                    {!loaded &&
+                    {!loaded && !asset.hasError &&
                         <div className="asset-loading">
                             <i className="fas fa-circle-notch fa-spin" />
                         </div>
