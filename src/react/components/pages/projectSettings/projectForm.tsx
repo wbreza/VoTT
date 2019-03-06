@@ -148,6 +148,7 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
             tagsInput: CustomField<ITagsInputProps>(TagsInput, (props) => {
                 return {
                     tags: props.formData,
+                    autofocus: true,
                     onChange: props.onChange,
                     placeHolder: strings.tags.placeholder,
                     onShiftTagClick: this.onTagShiftClick,
