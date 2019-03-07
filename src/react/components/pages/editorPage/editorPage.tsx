@@ -16,7 +16,6 @@ import "./editorPage.scss";
 import EditorSideBar from "./editorSideBar";
 import { EditorToolbar } from "./editorToolbar";
 import { ToolbarItem } from "../../toolbar/toolbarItem";
-import { SelectionMode } from "vott-ct/lib/js/CanvasTools/Selection/AreaSelector";
 import { KeyboardBinding } from "../../common/keyboardBinding/keyboardBinding";
 import { KeyEventType } from "../../common/keyboardManager/keyboardManager";
 import { AssetService } from "../../../../services/assetService";
@@ -25,6 +24,7 @@ import CanvasHelpers from "./canvasHelpers";
 import { tagColors } from "../../../../common/tagColors";
 import { ToolbarItemName } from "../../../../registerToolbar";
 import { strings } from "../../../../common/strings";
+import { SelectionMode } from "vott-ct/lib/js/CanvasTools/Interface/ISelectorSettings";
 
 /**
  * Properties for Editor Page
@@ -146,6 +146,7 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
                         selectedAsset={selectedAsset ? selectedAsset.asset : null}
                         onAssetSelected={this.selectAsset}
                         onAssetError={this.onAssetError}
+                        onAssetLoaded={this.onAssetLoaded}
                     />
                 </div>
                 <div className="editor-page-content">
@@ -373,10 +374,17 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
         }
     }
 
-    private onAssetError = async (e) => {
+    private onAssetError = async () => {
         const assetMetadata = await this.props.actions.loadAssetMetadata(this.props.project,
                                                                         this.state.selectedAsset.asset);
         assetMetadata.asset.hasError = true;
+        this.onAssetMetadataChanged(assetMetadata);
+    }
+
+    private onAssetLoaded = async () => {
+        const assetMetadata = await this.props.actions.loadAssetMetadata(this.props.project,
+            this.state.selectedAsset.asset);
+        assetMetadata.asset.hasError = false;
         this.onAssetMetadataChanged(assetMetadata);
     }
 

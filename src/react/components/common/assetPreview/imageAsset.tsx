@@ -20,7 +20,6 @@ export class ImageAsset extends React.Component<IAssetProps> {
     private onLoad = () => {
         if (this.props.onLoaded) {
             this.props.onLoaded(this.image.current);
-            this.props.asset.hasError = false;
         }
     }
 

@@ -32,6 +32,7 @@
             flex-grow: 1;
             background-color: $darker-5;
             flex-direction: column;
+
         }
 
         &-footer {
@@ -137,6 +138,9 @@
     color: white;
 }
 
+.asset-error {
+    margin: auto;
+}
 
 .asset-preview {
     display: flex;

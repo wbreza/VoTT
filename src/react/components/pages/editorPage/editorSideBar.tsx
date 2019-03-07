@@ -14,6 +14,7 @@ export interface IEditorSideBarProps {
     onAssetSelected: (asset: IAsset) => void;
     selectedAsset?: IAsset;
     onAssetError?: (e) => void;
+    onAssetLoaded?: (e) => void;
 }
 
 /**
