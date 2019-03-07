@@ -20,9 +20,18 @@ rm -rf ${REPORT_DIR}
 mkdir -p ${REPORT_DIR}
 
 #NOTE: be sure to set AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY environment variables
-az storage blob download-batch -d report -s '$web'
+azcopy \
+    --source https://$(AZURE_STORAGE_ACCOUNT).blob.core.windows.net/$web \
+    --destination report \
+    --source-key $(AZURE_STORAGE_KEY) \
+    --recursive
 
 ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
 
 # push appended report back to blob - CLI will correctly take care of MIME types
-az storage blob upload-batch -d '$web' -s report
+azcopy \
+    --source report/ \
+    --destination https://$(AZURE_STORAGE_ACCOUNT).blob.core.windows.net/$web \
+    --dest-key $(AZURE_STORAGE_KEY) \
+    --recursive
+
