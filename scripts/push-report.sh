@@ -19,11 +19,14 @@ echo "commit=${COMMIT_SHA}"
 rm -rf ${REPORT_DIR}
 mkdir -p ${REPORT_DIR}
 
+account=$(AZURE_STORAGE_ACCOUNT)
+key=$(AZURE_STORAGE_KEY)
+
 #NOTE: be sure to set AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY environment variables
 azcopy \
-    --source https://$(AZURE_STORAGE_ACCOUNT).blob.core.windows.net/$web \
+    --source https://${account}.blob.core.windows.net/$web \
     --destination report \
-    --source-key $(AZURE_STORAGE_KEY) \
+    --source-key ${key} \
     --recursive
 
 ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
@@ -31,7 +34,7 @@ ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
 # push appended report back to blob - CLI will correctly take care of MIME types
 azcopy \
     --source report/ \
-    --destination https://$(AZURE_STORAGE_ACCOUNT).blob.core.windows.net/$web \
-    --dest-key $(AZURE_STORAGE_KEY) \
+    --destination https://${account}.blob.core.windows.net/$web \
+    --dest-key ${key} \
     --recursive
 
