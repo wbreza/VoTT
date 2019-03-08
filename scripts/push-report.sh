@@ -29,7 +29,7 @@ key=$2
 echo "account: ${account}"
 
 azcopy \
-    --source https://${account}.blob.core.windows.net/$web \
+    --source https://${account}.blob.core.windows.net/\$web \
     --destination report \
     --source-key ${key} \
     --recursive
@@ -39,7 +39,7 @@ ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
 # push appended report back to blob - CLI will correctly take care of MIME types
 azcopy \
     --source report/ \
-    --destination https://${account}.blob.core.windows.net/$web \
+    --destination https://${account}.blob.core.windows.net/\$web \
     --dest-key ${key} \
     --recursive
 
