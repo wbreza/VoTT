@@ -23,7 +23,7 @@ mkdir -p ${REPORT_DIR}
 
 printenv | sort
 
-echo "account: $(storageAccount)
+echo "account: ${storageAccount}"
 
 azcopy \
     --source https://vottv2.blob.core.windows.net/$web \
