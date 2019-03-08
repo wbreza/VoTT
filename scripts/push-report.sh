@@ -21,13 +21,10 @@ mkdir -p ${REPORT_DIR}
 
 #NOTE: be sure to set AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY environment variables
 
-account=$(AZURE_STORAGE_ACCOUNT)
-key=$(AZURE_STORAGE_KEY)
-
 azcopy \
-    --source https://${account}.blob.core.windows.net/$web \
+    --source https://vottv2.blob.core.windows.net/$web \
     --destination report \
-    --source-key ${key} \
+    --source-key ${SECRET_AZURE_STORAGE_KEY} \
     --recursive
 
 ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
@@ -35,7 +32,7 @@ ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
 # push appended report back to blob - CLI will correctly take care of MIME types
 azcopy \
     --source report/ \
-    --destination https://${account}.blob.core.windows.net/$web \
-    --dest-key ${key} \
+    --destination https://vottv2.blob.core.windows.net/$web \
+    --dest-key ${SECRET_AZURE_STORAGE_KEY} \
     --recursive
 
