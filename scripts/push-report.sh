@@ -19,8 +19,6 @@ echo "commit=${COMMIT_SHA}"
 rm -rf ${REPORT_DIR}
 mkdir -p ${REPORT_DIR}
 
-az login
-
 #NOTE: be sure to set AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY environment variables
 azcopy \
     --source https://$(AZURE_STORAGE_ACCOUNT).blob.core.windows.net/$web \
