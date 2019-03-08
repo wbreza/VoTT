@@ -24,7 +24,7 @@ mkdir -p ${REPORT_DIR}
 azcopy \
     --source https://vottv2.blob.core.windows.net/$web \
     --destination report \
-    --source-key ${SECRET_AZURE_STORAGE_KEY} \
+    --source-key $(SECRET_AZURE_STORAGE_KEY) \
     --recursive
 
 ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
@@ -33,6 +33,6 @@ ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
 azcopy \
     --source report/ \
     --destination https://vottv2.blob.core.windows.net/$web \
-    --dest-key ${SECRET_AZURE_STORAGE_KEY} \
+    --dest-key $(SECRET_AZURE_STORAGE_KEY) \
     --recursive
 
