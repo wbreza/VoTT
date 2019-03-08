@@ -21,6 +21,8 @@ mkdir -p ${REPORT_DIR}
 
 #NOTE: be sure to set AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY environment variables
 
+printenv | sort
+
 azcopy \
     --source https://vottv2.blob.core.windows.net/$web \
     --destination report \
