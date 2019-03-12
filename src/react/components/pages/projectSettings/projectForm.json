@@ -39,10 +39,6 @@
             "required": [
                 "frameExtractionRate"
             ]
-        },
-        "tags": {
-            "title": "${strings.tags.title}",
-            "type": "array"
         }
     },
     "required": [

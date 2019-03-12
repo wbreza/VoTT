@@ -1,6 +1,7 @@
 import React from "react";
 import Form, { FormValidation, ISubmitEvent } from "react-jsonschema-form";
-import { ITagsInputProps, TagEditorModal, TagsInput } from "vott-react";
+import { TagEditorModal } from "vott-react";
+import { TagInput, ITagInputProps } from "../../common/tagInput/tagInput"
 import { addLocValues, strings } from "../../../../common/strings";
 import { IConnection, IProject, ITag, IAppSettings } from "../../../../models/applicationState";
 import { StorageProviderFactory } from "../../../../providers/storage/storageProviderFactory";
@@ -8,8 +9,9 @@ import { ConnectionPickerWithRouter } from "../../common/connectionPicker/connec
 import CustomField from "../../common/customField/customField";
 import CustomFieldTemplate from "../../common/customField/customFieldTemplate";
 import { ISecurityTokenPickerProps, SecurityTokenPicker } from "../../common/securityTokenPicker/securityTokenPicker";
-import "vott-react/dist/css/tagsInput.css";
+// import "vott-react/dist/css/tagsInput.css";
 import { IConnectionProviderPickerProps } from "../../common/connectionProviderPicker/connectionProviderPicker";
+import { isNullOrUndefined } from "util";
 
 // tslint:disable-next-line:no-var-requires
 const formSchema = addLocValues(require("./projectForm.json"));
@@ -29,6 +31,7 @@ export interface IProjectFormProps extends React.Props<ProjectForm> {
     appSettings: IAppSettings;
     onSubmit: (project: IProject) => void;
     onCancel?: () => void;
+    onTagsChanged?: () => void;
 }
 
 /**
@@ -43,6 +46,8 @@ export interface IProjectFormState {
     formData: IProject;
     formSchema: any;
     uiSchema: any;
+    lockedTags: string[];
+    selectedTag: ITag;
 }
 
 /**
@@ -50,7 +55,7 @@ export interface IProjectFormState {
  * @description - Form for editing or creating VoTT projects
  */
 export default class ProjectForm extends React.Component<IProjectFormProps, IProjectFormState> {
-    private tagsInput: React.RefObject<TagsInput>;
+    private tagInput: React.RefObject<TagInput>;
     private tagEditorModal: React.RefObject<TagEditorModal>;
 
     constructor(props, context) {
@@ -62,15 +67,18 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
             formData: {
                 ...this.props.project,
             },
+            lockedTags: [],
+            selectedTag: null,
         };
-        this.tagsInput = React.createRef<TagsInput>();
+        this.tagInput = React.createRef<TagInput>();
         this.tagEditorModal = React.createRef<TagEditorModal>();
 
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.onFormCancel = this.onFormCancel.bind(this);
         this.onFormValidate = this.onFormValidate.bind(this);
         this.onTagShiftClick = this.onTagShiftClick.bind(this);
-        this.onTagModalOk = this.onTagModalOk.bind(this);
+        // this.onTagModalOk = this.onTagModalOk.bind(this);
+        this.onTagsChanged = this.onTagsChanged.bind(this);
     }
     /**
      * Updates state if project from properties has changed
@@ -98,21 +106,20 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
                 uiSchema={this.state.uiSchema}
                 formData={this.state.formData}
                 onSubmit={this.onFormSubmit}>
+                <TagInput
+                    tags={[]}
+                    lockedTags={this.state.lockedTags}
+                    onChange={this.onTagsChanged}
+                    onLockedTagsChange={this.onLockedTagsChanged}
+                    onTagClick={this.onTagClicked}
+                    onCtrlTagClick={this.onCtrlTagClicked}
+                />
                 <div>
                     <button className="btn btn-success mr-1" type="submit">{strings.projectSettings.save}</button>
                     <button className="btn btn-secondary btn-cancel"
                         type="button"
                         onClick={this.onFormCancel}>{strings.common.cancel}</button>
                 </div>
-                <TagEditorModal
-                    ref={this.tagEditorModal}
-                    onOk={this.onTagModalOk}
-
-                    tagNameText={strings.tags.modal.name}
-                    tagColorText={strings.tags.modal.color}
-                    saveText={strings.common.save}
-                    cancelText={strings.common.cancel}
-                />
             </Form>
         );
     }
@@ -145,13 +152,13 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
                     onChange: props.onChange,
                 };
             }),
-            tagsInput: CustomField<ITagsInputProps>(TagsInput, (props) => {
+            tagInput: CustomField<ITagInputProps>(TagInput, (props) => {
                 return {
                     tags: props.formData,
                     onChange: props.onChange,
                     placeHolder: strings.tags.placeholder,
                     onShiftTagClick: this.onTagShiftClick,
-                    ref: this.tagsInput,
+                    ref: this.tagInput,
                 };
             }),
         };
@@ -161,10 +168,46 @@ export default class ProjectForm extends React.Component<IProjectFormProps, IPro
         this.tagEditorModal.current.open(tag);
     }
 
-    private onTagModalOk(oldTag: ITag, newTag: ITag) {
-        this.tagsInput.current.updateTag(oldTag, newTag);
-        this.tagEditorModal.current.close();
+    private onLockedTagsChanged = (lockedTags: string[]) => {
+        this.setState({lockedTags});
     }
+
+    private onTagsChanged = (tags) => {
+        const project = {
+            ...this.props.project,
+            tags,
+        };
+        // this.setState({ project }, async () => {
+        //     await this.props.actions.saveProject(project);
+        //     if (this.canvas.current) {
+        //         this.canvas.current.updateCanvasToolsRegions();
+        //     }
+        // });
+    }
+
+     /**
+     * Called when a tag from footer is clicked
+     * @param tag Tag clicked
+     */
+    private onTagClicked = (tag: ITag): void => {
+        // this.setState({
+        //     selectedTag: tag.name,
+        //     lockedTags: [],
+        // }, () => this.canvas.current.applyTag(tag.name));
+    }
+
+    private onCtrlTagClicked = (tag: ITag): void => {
+        const locked = this.state.lockedTags;
+        // this.setState({
+        //     selectedTag: tag.name,
+        //     lockedTags: CanvasHelpers.toggleTag(locked, tag.name),
+        // }, () => this.canvas.current.applyTag(tag.name));
+    }
+
+    // private onTagModalOk(oldTag: ITag, newTag: ITag) {
+    //     // this.tagInput.current.updateTag(oldTag, newTag);
+    //     this.tagEditorModal.current.close();
+    // }
 
     private onFormValidate(project: IProject, errors: FormValidation) {
         if (Object.keys(project.sourceConnection).length === 0) {
