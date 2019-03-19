@@ -17,7 +17,7 @@ export interface IV1Project {
     inputTags: string;
     suggestiontype: string;
     scd: boolean;
-    visitedFrames: string[];
+    visitedFrames: any[];
     tag_colors: string[];
 }
 

@@ -61,6 +61,13 @@ export default class ImportService implements IImportService {
             },
             autoSave: true,
         };
+
+        if (typeof originalProject.frames["key"] === "number"){
+            // then this is a video project
+            convertedProject.lastVisitedAssetId = "dummyId";
+            convertedProject.exportFormat.providerType = "vottJson";
+        }
+
         return convertedProject;
     }
 
