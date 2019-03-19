@@ -19,10 +19,12 @@ echo "commit=${COMMIT_SHA}"
 rm -rf ${REPORT_DIR}
 mkdir -p ${REPORT_DIR}
 
+download_log_file=$1
 #NOTE: be sure to set AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY environment variables
-az storage blob download-batch -d report -s '$web'
+az storage blob download-batch -d report -s '$web' > ${download_log_file}
 
 ${BASEDIR}/generate-report.sh -o ${REPORT_DIR} -v ${VERSION} -c ${COMMIT_SHA}
 
 # push appended report back to blob - CLI will correctly take care of MIME types
-az storage blob upload-batch -d '$web' -s report
+upload_log_file=$2
+az storage blob upload-batch -d '$web' -s report > ${upload_log_file}
