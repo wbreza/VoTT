@@ -187,7 +187,7 @@ export default class HomePage extends React.Component<IHomePageProps, IHomePageS
 
         this.props.applicationActions.ensureSecurityToken(project);
 
-        if (project.lastVisitedAssetId !== null) {
+        if (project.lastVisitedAssetId !== undefined) {
             parent = await importService.createParentVideoAsset(projectInfo);
         }
         try {

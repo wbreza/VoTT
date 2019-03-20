@@ -63,7 +63,7 @@ export default class ImportService implements IImportService {
             autoSave: true,
         };
 
-        if (typeof originalProject.frames["key"] === "number"){
+        if (originalProject.visitedFrames.every(item => typeof item === "string")) {
             // then this is a video project
             convertedProject.lastVisitedAssetId = "dummyId";
             // next line necessary?
@@ -91,18 +91,23 @@ export default class ImportService implements IImportService {
                 let asset: IAsset;
                 // can't do the following line for video--is this saving file?
                 // if video:
-                if (typeof frameName === "number") {
-                    // need to have file path mp4 concatted with ex. #4.6 (how is the 4.6 generated? seconds?)
+                if (parent !== null) {
+                    // need to have file path mp4 concatted with #timestamp
                     asset = AssetService.createAssetFromFilePath(
                         `${v1Project.file.path}#${frameName}`);
+                    const frameInt = Number(frameName);
+                    assetState = originalProject.visitedFrames.indexOf(frameInt) > -1 && frameRegions.length > 0
+                        ? AssetState.Tagged : (originalProject.visitedFrames.indexOf(frameName) > -1
+                        ? AssetState.Visited : AssetState.NotVisited);
                 } else {
                     asset = AssetService.createAssetFromFilePath(
                         `${v1Project.file.path.replace(/[^\/]*$/, "")}${frameName}`);
-                }
-                const populatedMetadata = await assetService.getAssetMetadata(asset).then((metadata) => {
                     assetState = originalProject.visitedFrames.indexOf(frameName) > -1 && frameRegions.length > 0
                         ? AssetState.Tagged : (originalProject.visitedFrames.indexOf(frameName) > -1
                         ? AssetState.Visited : AssetState.NotVisited);
+                }
+                const populatedMetadata = await assetService.getAssetMetadata(asset).then((metadata) => {
+                    
                     const taggedMetadata = this.addRegions(metadata, frameRegions);
                     taggedMetadata.asset.state = assetState;
                     taggedMetadata.asset.path = `file:${taggedMetadata.asset.path}`;
