@@ -12,7 +12,7 @@ import IProjectActions from "../redux/actions/projectActions";
  */
 interface IImportService {
     convertProject(project: IFileInfo): Promise<IProject>;
-    generateAssets(v1Project: IFileInfo, v2Project: IProject): Promise<IAssetMetadata[]>;
+    generateAssets(v1Project: IFileInfo, v2Project: IProject, parent?: IAsset): Promise<IAssetMetadata[]>;
     createParentVideoAsset(v1Project: IFileInfo): Promise<IAsset>;
 }
 
@@ -77,7 +77,7 @@ export default class ImportService implements IImportService {
      * Generate assets based on V1 Project frames and regions
      * @param project - V1 Project Content and File Information
      */
-    public async generateAssets(v1Project: IFileInfo, v2Project: IProject): Promise<IAssetMetadata[]> {
+    public async generateAssets(v1Project: IFileInfo, v2Project: IProject, parent?: IAsset): Promise<IAssetMetadata[]> {
         let originalProject: IV1Project;
         const generatedAssetMetadata: IAssetMetadata[] = [];
         let assetState: AssetState;
@@ -88,6 +88,8 @@ export default class ImportService implements IImportService {
         for (const frameName in originalProject.frames) {
             if (originalProject.frames.hasOwnProperty(frameName)) {
                 const frameRegions = originalProject.frames[frameName];
+                // can't do the following line for video--is this saving file?
+                // need to have file path mp4 concatted with #4.6 (how is 4.6 generated?)
                 const asset = AssetService.createAssetFromFilePath(
                     `${v1Project.file.path.replace(/[^\/]*$/, "")}${frameName}`);
                 const populatedMetadata = await assetService.getAssetMetadata(asset).then((metadata) => {
@@ -97,6 +99,10 @@ export default class ImportService implements IImportService {
                     const taggedMetadata = this.addRegions(metadata, frameRegions);
                     taggedMetadata.asset.state = assetState;
                     taggedMetadata.asset.path = `file:${taggedMetadata.asset.path}`;
+                    if (typeof frameName === "number") {
+                        console.log("VIDEO!");
+                        taggedMetadata.asset.parent = parent;
+                    }
                     return taggedMetadata;
                 });
                 generatedAssetMetadata.push(populatedMetadata);
