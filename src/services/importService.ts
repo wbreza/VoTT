@@ -88,10 +88,17 @@ export default class ImportService implements IImportService {
         for (const frameName in originalProject.frames) {
             if (originalProject.frames.hasOwnProperty(frameName)) {
                 const frameRegions = originalProject.frames[frameName];
+                let asset: IAsset;
                 // can't do the following line for video--is this saving file?
-                // need to have file path mp4 concatted with #4.6 (how is 4.6 generated?)
-                const asset = AssetService.createAssetFromFilePath(
-                    `${v1Project.file.path.replace(/[^\/]*$/, "")}${frameName}`);
+                // if video:
+                if (typeof frameName === "number") {
+                    // need to have file path mp4 concatted with ex. #4.6 (how is the 4.6 generated? seconds?)
+                    asset = AssetService.createAssetFromFilePath(
+                        `${v1Project.file.path}#${frameName}`);
+                } else {
+                    asset = AssetService.createAssetFromFilePath(
+                        `${v1Project.file.path.replace(/[^\/]*$/, "")}${frameName}`);
+                }
                 const populatedMetadata = await assetService.getAssetMetadata(asset).then((metadata) => {
                     assetState = originalProject.visitedFrames.indexOf(frameName) > -1 && frameRegions.length > 0
                         ? AssetState.Tagged : (originalProject.visitedFrames.indexOf(frameName) > -1
