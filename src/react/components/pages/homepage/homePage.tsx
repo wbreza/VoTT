@@ -177,11 +177,8 @@ export default class HomePage extends React.Component<IHomePageProps, IHomePageS
         const importService = new ImportService(this.props.actions);
         let generatedAssetMetadata: IAssetMetadata[];
         let project: IProject;
-<<<<<<< HEAD
         let parent: IAsset;
 
-=======
->>>>>>> check for video in v1
         try {
             project = await importService.convertProject(projectInfo);
         } catch (e) {
@@ -191,24 +188,25 @@ export default class HomePage extends React.Component<IHomePageProps, IHomePageS
         this.props.applicationActions.ensureSecurityToken(project);
 
         if (project.lastVisitedAssetId !== null) {
-            project.lastVisitedAssetId == generatedAssetMetadata[generatedAssetMetadata.length - 1].asset.id;
-            importService.createParentVideoAsset(projectInfo);
-        } else {
-            try {
-                generatedAssetMetadata = await importService.generateAssets(projectInfo, project);
-                await this.props.actions.saveProject(project);
-                // await this.props.actions.loadProject(project);
-                const savedMetadata = generatedAssetMetadata.map((assetMetadata) => {
-                    return this.props.actions.saveAssetMetadata(this.props.project, assetMetadata);
-                });
-    
-                await Promise.all(savedMetadata);
-            } catch (e) {
-                throw new Error(`Error importing project information - ${e.message}`);
-            }
+            parent = await importService.createParentVideoAsset(projectInfo);
         }
+        try {
+            generatedAssetMetadata = await importService.generateAssets(projectInfo, project, parent ? parent : null);
+            await this.props.actions.saveProject(project);
+            // await this.props.actions.loadProject(project);
+            const savedMetadata = generatedAssetMetadata.map((assetMetadata) => {
+                return this.props.actions.saveAssetMetadata(this.props.project, assetMetadata);
+            });
 
-        await this.props.actions.saveProject(this.props.project);
-        await this.loadSelectedProject(this.props.project);
+            await Promise.all(savedMetadata);
+        } catch (e) {
+            throw new Error(`Error importing project information - ${e.message}`);
+        }
+        if (project.lastVisitedAssetId !== null) {
+            project.lastVisitedAssetId == generatedAssetMetadata[generatedAssetMetadata.length - 1].asset.id;
+        } else {
+            await this.props.actions.saveProject(this.props.project);
+            await this.loadSelectedProject(this.props.project);
+        }
     }
 }

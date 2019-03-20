@@ -12,7 +12,7 @@ import IProjectActions from "../redux/actions/projectActions";
  */
 interface IImportService {
     convertProject(project: IFileInfo): Promise<IProject>;
-    generateAssets(v1Project: IFileInfo, v2Project: IProject): Promise<IAssetMetadata[]>;
+    generateAssets(v1Project: IFileInfo, v2Project: IProject, parent?: IAsset): Promise<IAssetMetadata[]>;
     createParentVideoAsset(v1Project: IFileInfo): Promise<IAsset>;
 }
 
