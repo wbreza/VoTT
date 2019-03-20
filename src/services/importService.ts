@@ -1,6 +1,6 @@
 import shortid from "shortid";
 import { IProject, ITag, IConnection, AppError, ErrorCode, IPoint,
-        IAssetMetadata, IRegion, RegionType, AssetState, IFileInfo } from "../models/applicationState";
+        IAssetMetadata, IRegion, RegionType, AssetState, IFileInfo, IAsset } from "../models/applicationState";
 import { IV1Project, IV1Region } from "../models/v1Models";
 import packageJson from "../../package.json";
 import { AssetService } from "./assetService";
@@ -13,6 +13,7 @@ import IProjectActions from "../redux/actions/projectActions";
 interface IImportService {
     convertProject(project: IFileInfo): Promise<IProject>;
     generateAssets(v1Project: IFileInfo, v2Project: IProject): Promise<IAssetMetadata[]>;
+    createParentVideoAsset(v1Project: IFileInfo): Promise<IAsset>;
 }
 
 /**
@@ -65,6 +66,7 @@ export default class ImportService implements IImportService {
         if (typeof originalProject.frames["key"] === "number"){
             // then this is a video project
             convertedProject.lastVisitedAssetId = "dummyId";
+            // next line necessary?
             convertedProject.exportFormat.providerType = "vottJson";
         }
 
@@ -101,6 +103,27 @@ export default class ImportService implements IImportService {
             }
         }
         return generatedAssetMetadata;
+    }
+
+    /**
+     * Generate parent asset based on V1 Project video assets
+     * @param project - V1 Project Content and File Information
+     */
+    public async createParentVideoAsset(v1Project: IFileInfo): Promise<IAsset> {
+        let parentAsset: IAsset;
+        parentAsset = {
+            format: "mp4",
+            id: shortid.generate(),
+            name: v1Project.file.path.replace(/[^\/]*$/, ""),
+            path: `file:/${v1Project.file.path}`,
+            size: {
+                width: 854,
+                height: 480
+            },
+            state: 1,
+            type: 2
+        };
+        return parentAsset;
     }
 
     /**

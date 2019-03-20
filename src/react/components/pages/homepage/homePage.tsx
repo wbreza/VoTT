@@ -185,21 +185,22 @@ export default class HomePage extends React.Component<IHomePageProps, IHomePageS
 
         this.props.applicationActions.ensureSecurityToken(project);
 
-        try {
-            generatedAssetMetadata = await importService.generateAssets(projectInfo, project);
-            await this.props.actions.saveProject(project);
-            // await this.props.actions.loadProject(project);
-            const savedMetadata = generatedAssetMetadata.map((assetMetadata) => {
-                return this.props.actions.saveAssetMetadata(this.props.project, assetMetadata);
-            });
-
-            await Promise.all(savedMetadata);
-        } catch (e) {
-            throw new Error(`Error importing project information - ${e.message}`);
-        }
-        
         if (project.lastVisitedAssetId !== null) {
             project.lastVisitedAssetId == generatedAssetMetadata[generatedAssetMetadata.length - 1].asset.id;
+            importService.createParentVideoAsset(projectInfo);
+        } else {
+            try {
+                generatedAssetMetadata = await importService.generateAssets(projectInfo, project);
+                await this.props.actions.saveProject(project);
+                // await this.props.actions.loadProject(project);
+                const savedMetadata = generatedAssetMetadata.map((assetMetadata) => {
+                    return this.props.actions.saveAssetMetadata(this.props.project, assetMetadata);
+                });
+    
+                await Promise.all(savedMetadata);
+            } catch (e) {
+                throw new Error(`Error importing project information - ${e.message}`);
+            }
         }
 
         await this.props.actions.saveProject(this.props.project);
