@@ -63,11 +63,9 @@ export default class ImportService implements IImportService {
             autoSave: true,
         };
 
-        if (originalProject.visitedFrames.every(item => typeof item === "string")) {
+        if (originalProject.visitedFrames.every(item => typeof item === "number")) {
             // then this is a video project
             convertedProject.lastVisitedAssetId = "dummyId";
-            // next line necessary?
-            convertedProject.exportFormat.providerType = "vottJson";
         }
 
         return convertedProject;
@@ -92,10 +90,10 @@ export default class ImportService implements IImportService {
                 // can't do the following line for video--is this saving file?
                 // if video:
                 if (parent !== null) {
-                    // need to have file path mp4 concatted with #timestamp
-                    asset = AssetService.createAssetFromFilePath(
-                        `${v1Project.file.path}#${frameName}`);
                     const frameInt = Number(frameName);
+                    // can we do more (sliding values) than framerate in v1?
+                    asset = AssetService.createAssetFromFilePath(
+                        `${v1Project.file.path}#${frameInt/Number(originalProject.framerate)}`);
                     assetState = originalProject.visitedFrames.indexOf(frameInt) > -1 && frameRegions.length > 0
                         ? AssetState.Tagged : (originalProject.visitedFrames.indexOf(frameName) > -1
                         ? AssetState.Visited : AssetState.NotVisited);
