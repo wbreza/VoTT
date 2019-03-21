@@ -80,6 +80,7 @@ export default class ImportService implements IImportService {
         const generatedAssetMetadata: IAssetMetadata[] = [];
         let assetState: AssetState;
         const assetService = new AssetService(v2Project);
+        let isVideo = false;
 
         originalProject = JSON.parse(v1Project.content as string);
 
@@ -90,6 +91,7 @@ export default class ImportService implements IImportService {
                 // can't do the following line for video--is this saving file?
                 // if video:
                 if (parent !== null) {
+                    isVideo = true;
                     const frameInt = Number(frameName);
                     // can we do more (sliding values) than framerate in v1?
                     asset = AssetService.createAssetFromFilePath(
@@ -105,11 +107,10 @@ export default class ImportService implements IImportService {
                         ? AssetState.Visited : AssetState.NotVisited);
                 }
                 const populatedMetadata = await assetService.getAssetMetadata(asset).then((metadata) => {
-                    
                     const taggedMetadata = this.addRegions(metadata, frameRegions);
                     taggedMetadata.asset.state = assetState;
                     taggedMetadata.asset.path = `file:${taggedMetadata.asset.path}`;
-                    if (typeof frameName === "number") {
+                    if (isVideo) {
                         console.log("VIDEO!");
                         taggedMetadata.asset.parent = parent;
                     }
