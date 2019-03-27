@@ -254,6 +254,7 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
         // The root asset can either be the actual asset being edited (ex: VideoFrame) or the top level / root
         // asset selected from the side bar (image/video).
         const rootAsset = { ...(assetMetadata.asset.parent || assetMetadata.asset) };
+        console.log(rootAsset);
 
         if (this.isTaggableAssetType(assetMetadata.asset)) {
             assetMetadata.asset.state = assetMetadata.regions.length > 0 ? AssetState.Tagged : AssetState.Visited;
@@ -283,6 +284,7 @@ export default class EditorPage extends React.Component<IEditorPageProps, IEdito
 
         const assetService = new AssetService(this.props.project);
         const childAssets = assetService.getChildAssets(rootAsset);
+        console.log(childAssets);
 
         // Find and update the root asset in the internal state
         // This forces the root assets that are displayed in the sidebar to

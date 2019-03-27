@@ -1,10 +1,12 @@
 import shortid from "shortid";
+import MD5 from "md5.js";
 import { IProject, ITag, IConnection, AppError, ErrorCode, IPoint,
-        IAssetMetadata, IRegion, RegionType, AssetState, IFileInfo, IAsset } from "../models/applicationState";
+        IAssetMetadata, IRegion, RegionType, AssetState, IFileInfo, IAsset, AssetType } from "../models/applicationState";
 import { IV1Project, IV1Region } from "../models/v1Models";
 import packageJson from "../../package.json";
 import { AssetService } from "./assetService";
 import IProjectActions from "../redux/actions/projectActions";
+import HtmlFileReader from "../common/htmlFileReader"
 
 /**
  * Functions required for an import service
@@ -88,17 +90,22 @@ export default class ImportService implements IImportService {
             if (originalProject.frames.hasOwnProperty(frameName)) {
                 const frameRegions = originalProject.frames[frameName];
                 let asset: IAsset;
-                // can't do the following line for video--is this saving file?
                 // if video:
+                // if (originalProject.visitedFrames.every(item => typeof item === "number")) {
                 if (parent !== null) {
                     isVideo = true;
                     const frameInt = Number(frameName);
-                    // can we do more (sliding values) than framerate in v1?
+                    const timestamp = frameInt/Number(originalProject.framerate);
+                    const pathToUse = v1Project.file.path.replace(/\.[^/.]+$/, "");
                     asset = AssetService.createAssetFromFilePath(
-                        `${v1Project.file.path}#${frameInt/Number(originalProject.framerate)}`);
+                        `file:${pathToUse}#t=${timestamp}`);
                     assetState = originalProject.visitedFrames.indexOf(frameInt) > -1 && frameRegions.length > 0
-                        ? AssetState.Tagged : (originalProject.visitedFrames.indexOf(frameName) > -1
+                        ? AssetState.Tagged : (originalProject.visitedFrames.indexOf(frameInt) > -1
                         ? AssetState.Visited : AssetState.NotVisited);
+                    asset.timestamp = timestamp;
+                    asset.type = AssetType.VideoFrame;
+                    asset.parent = parent;
+                    asset.size = asset.parent.size;
                 } else {
                     asset = AssetService.createAssetFromFilePath(
                         `${v1Project.file.path.replace(/[^\/]*$/, "")}${frameName}`);
@@ -111,7 +118,6 @@ export default class ImportService implements IImportService {
                     taggedMetadata.asset.state = assetState;
                     taggedMetadata.asset.path = `file:${taggedMetadata.asset.path}`;
                     if (isVideo) {
-                        console.log("VIDEO!");
                         taggedMetadata.asset.parent = parent;
                     }
                     return taggedMetadata;
@@ -128,18 +134,21 @@ export default class ImportService implements IImportService {
      */
     public async createParentVideoAsset(v1Project: IFileInfo): Promise<IAsset> {
         let parentAsset: IAsset;
+        // parentAsset = AssetService.createAssetFromFilePath(v1Project.file.path);
         parentAsset = {
             format: "mp4",
-            id: shortid.generate(),
-            name: v1Project.file.path.replace(/[^\/]*$/, ""),
-            path: `file:/${v1Project.file.path}`,
+            id: new MD5().update(v1Project.file.path.replace(/\.[^/.]+$/,"")).digest("hex"),
+            name: v1Project.file.path.replace(/\.[^/.]+$/, "").replace(/^.*[\\\/]/, ""),
+            path: `file:${v1Project.file.path.replace(/\.[^/.]+$/,"")}`,
             size: {
                 width: 854,
                 height: 480
             },
             state: 1,
-            type: 2
+            type: AssetType.Video,
         };
+        const assetProps = await HtmlFileReader.readAssetAttributes(parentAsset);
+        parentAsset.size = { width: assetProps.width, height: assetProps.height };
         return parentAsset;
     }
 

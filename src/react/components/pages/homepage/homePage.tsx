@@ -18,6 +18,7 @@ import {
 } from "../../../../models/applicationState";
 import ImportService from "../../../../services/importService";
 import { IAssetMetadata } from "../../../../models/applicationState";
+import { AssetService } from "../../../../services/assetService";
 import { toast } from "react-toastify";
 import MessageBox from "../../common/messageBox/messageBox";
 
@@ -205,7 +206,18 @@ export default class HomePage extends React.Component<IHomePageProps, IHomePageS
         if (project.lastVisitedAssetId !== undefined) {
             project.lastVisitedAssetId == generatedAssetMetadata[generatedAssetMetadata.length - 1].asset.id;
         }
+
+        // const rootAsset = { ...(assetMetadata.asset.parent || assetMetadata.asset) };
+
         await this.props.actions.saveProject(this.props.project);
+
+        if (parent) {
+            const assetService = new AssetService(this.props.project);
+            const childAssets = assetService.getChildAssets(parent);
+
+            console.log(childAssets);
+        }
+
         await this.loadSelectedProject(this.props.project);
     }
 }
