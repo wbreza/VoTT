@@ -207,14 +207,11 @@ export interface IAppStrings {
             escape: string;
         }
         assetError: string;
-<<<<<<< HEAD
         tags: {
             hotKey: {
                 help: string;
             },
         }
-=======
->>>>>>> 255abc1ec27f308af9e022ca92d942679779034a
         canvas: {
             removeAllRegions: {
                 title: string;
