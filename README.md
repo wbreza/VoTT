@@ -189,6 +189,7 @@ Once assets have been labeled, they can be exported into a variety of formats:
 * [Azure Custom Vision Service](https://azure.microsoft.com/en-us/services/cognitive-services/custom-vision-service/)
 * TensorFlow (Pascal VOC and TFRecords)
 * VoTT (generic JSON schema)
+* CSV
 
 In addition, users may choose to export
 
@@ -238,7 +239,7 @@ VOTT allows you to fine tune the bounding boxes using the arrow keys in a few di
 * Ctrl + Alt + Arrowkey - Shrink Region
 * Ctrl + Shift + Arrowkey - Expand Region
 
-The slide viewer can be navigated from the keyboard as follows: 
+The slide viewer can be navigated from the keyboard as follows:
 
 * W or ArrowUp - Previous Asset
 * S or ArrowDown - Next Asset

@@ -2,6 +2,7 @@ import { ExportProviderFactory } from "./providers/export/exportProviderFactory"
 import { TFPascalVOCExportProvider } from "./providers/export/tensorFlowPascalVOC";
 import { TFRecordsExportProvider } from "./providers/export/tensorFlowRecords";
 import { VottJsonExportProvider } from "./providers/export/vottJson";
+import { CSVFormatExportProvider } from "./providers/export/csvFormat";
 import { AssetProviderFactory } from "./providers/storage/assetProviderFactory";
 import { AzureBlobStorage } from "./providers/storage/azureBlobStorage";
 import { BingImageSearch } from "./providers/storage/bingImageSearch";
@@ -67,6 +68,11 @@ export default function registerProviders() {
         name: "azureCustomVision",
         displayName: strings.export.providers.azureCV.displayName,
         factory: (project, options) => new AzureCustomVisionProvider(project, options),
+    });
+    ExportProviderFactory.register({
+        name: "csvFormat",
+        displayName: strings.export.providers.csvFormat.displayName,
+        factory: (project, options) => new CSVFormatExportProvider(project, options),
     });
 
     registerToolbar();

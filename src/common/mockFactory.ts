@@ -632,14 +632,14 @@ export default class MockFactory {
 
     /**
      * Creates array of IExportProviderRegistrationOptions for the different providers
-     * vottJson, tensorFlowPascalVOC, azureCustomVision
+     * vottJson, tensorFlowPascalVOC, azureCustomVision, csvFormat
      */
     public static createExportProviderRegistrations(): IExportProviderRegistrationOptions[] {
         const registrations: IExportProviderRegistrationOptions[] = [];
         registrations.push(MockFactory.createExportProviderRegistration("vottJson"));
         registrations.push(MockFactory.createExportProviderRegistration("tensorFlowPascalVOC"));
         registrations.push(MockFactory.createExportProviderRegistration("azureCustomVision"));
-
+        registrations.push(MockFactory.createExportProviderRegistration("csvFormat"));
         return registrations;
     }
 

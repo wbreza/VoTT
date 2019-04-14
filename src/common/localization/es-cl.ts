@@ -356,6 +356,9 @@ export const spanish: IAppStrings = {
                     description: "Si se incluyen o no etiquetas no asignadas en los datos exportados",
                 },
             },
+            csvFormat: {
+                displayName: "CSV",
+            },
         },
         messages: {
             saveSuccess: "Configuración de exportación guardada correctamente",

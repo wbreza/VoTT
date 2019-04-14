@@ -354,6 +354,9 @@ export const english: IAppStrings = {
                     description: "Whether or not to include unassigned tags in exported data",
                 },
             },
+            csvFormat: {
+                displayName: "CSV",
+            },
         },
         messages: {
             saveSuccess: "Successfully saved export settings",

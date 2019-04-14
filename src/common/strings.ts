@@ -352,6 +352,9 @@ export interface IAppStrings {
                     description: string,
                 },
             },
+            csvFormat: {
+                displayName: string,
+            },
         },
         messages: {
             saveSuccess: string;
